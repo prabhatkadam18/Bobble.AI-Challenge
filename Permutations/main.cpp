@@ -3,7 +3,7 @@
 #include <vector>
 #include <iterator>
 #include <string>
-
+#include<unordered_set>
 
 using namespace std;
 
@@ -20,12 +20,17 @@ class CSVReader{
 
 vector<vector<char> > CSVReader::getData()
 {
+
+  vector<vector<char> > dataList;
 	ifstream file(fileName);
+
+  if(!file){
+    cout<<"CANNOT OPEN FILE\n";
+    return dataList;
+  }
  
-	vector<vector<char> > dataList;
  
 	string line = "";
-	// Iterate through each line and split the content using delimeter
   
 	while (getline(file, line))
 	{	
@@ -36,6 +41,10 @@ vector<vector<char> > CSVReader::getData()
         vec.push_back(line[i]);
       }
     }
+    vector<char>::iterator it; 
+    it = unique(vec.begin(), vec.end());                 //removing duplicate elements
+    vec.resize(distance(vec.begin(), it));
+
     dataList.push_back(vec);
 	}
   
@@ -58,10 +67,9 @@ void printPermutations(vector<vector<char> >&arr)
     for (int i = 0; i < n; i++) 
         indices[i] = 0; 
   
-    while (1) { 
-  
-        // printing combinations
-        if(!flag){
+    while (1) {
+      // printing combinations
+      if(!flag){
           for (int i = 0; i < n; i++) {
             cout << arr[i][indices[i]];
           }
@@ -100,13 +108,18 @@ void printPermutations(vector<vector<char> >&arr)
 }
 
 int main(int argc, char *argv[]){
-  CSVReader reader(argv[1]);  // reading the input file
-  vector<vector<char> > data = reader.getData();   
+
+  if(!argv[1]){
+    cout<<"Problem occured in opening File.";
+    return -1;
+  }
+  CSVReader reader(argv[1]);
+  vector<vector<char> > data = reader.getData();   //reading and storing the input
 
 
   printPermutations(data);
   cout<<endl;
-  
+
 	return 0;
 }
 
